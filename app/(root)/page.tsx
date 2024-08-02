@@ -13,21 +13,19 @@ interface Props {
 
 export default async function Home({ searchParams }: Props) {
   return (
-    <>
-      <Container className="mt-[40px] flex flex-col gap-10 items-start">
-        {/* Фильтр сортировки сверху страницы */}
-        <SortFilter />
+    <Container className="mt-[40px] flex flex-col gap-[40px] items-start">
+      {/* Фильтр сортировки сверху страницы */}
+      <SortFilter />
 
-        <div className="flex items-start gap-[30px] w-full">
-          {/* Левая часть */}
-          <Filters className="flex-shrink-0" />
+      <div className="flex items-start gap-[30px] w-full h-full">
+        {/* Левая часть */}
+        <Filters className="sticky top-[134px] inline-flex flex-shrink-0" />
 
-          {/* Правая часть */}
-          <Suspense fallback={<CatalogSkeleton />}>
-            <CatalogList searchParams={searchParams} />
-          </Suspense>
-        </div>
-      </Container>
-    </>
+        {/* Правая часть */}
+        <Suspense fallback={<CatalogSkeleton />}>
+          <CatalogList searchParams={searchParams} />
+        </Suspense>
+      </div>
+    </Container>
   );
 }

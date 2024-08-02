@@ -6,21 +6,36 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Register, RegisterSchema } from "./schemas";
 import { DialogTitle } from "@/components/ui/dialog";
+import { registerUser } from "@/lib/actions/users";
+import toast from "react-hot-toast";
 
 interface Props {
   className?: string;
   toggleType: () => void;
+  onClose: () => void;
 }
 
-export const RegisterForm: React.FC<Props> = ({ className, toggleType }) => {
+export const RegisterForm: React.FC<Props> = ({
+  className,
+  toggleType,
+  onClose,
+}) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<Register>({ resolver: zodResolver(RegisterSchema) });
 
-  const onSubmit = (data: any) => {
-    console.log(data);
+  const onSubmit = async (data: any) => {
+    try {
+      await registerUser(data);
+
+      toast.success("Вы успешно создали аккаунт");
+
+      onClose();
+    } catch (err: any) {
+      toast.error(err.message);
+    }
   };
 
   return (
@@ -51,11 +66,13 @@ export const RegisterForm: React.FC<Props> = ({ className, toggleType }) => {
         />
         <FormInput
           title="Введите пароль"
+          type="password"
           error={errors.password?.message}
           {...register("password")}
         />
         <FormInput
           title="Повторите пароль"
+          type="password"
           error={errors.confirmPassword?.message}
           {...register("confirmPassword")}
         />

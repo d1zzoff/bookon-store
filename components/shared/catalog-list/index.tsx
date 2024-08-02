@@ -26,9 +26,8 @@ export const CatalogList: React.FC<Props> = async ({
         По вашему запросу найдено {products?.length || 0} товар(ов/а)
       </p>
       <div className="flex gap-[30px] w-full flex-wrap">
-        {products?.map((item) => (
-          <ProductItem key={item.id} item={item} />
-        ))}
+        {products?.length > 0 &&
+          products.map((item) => <ProductItem key={item.id} item={item} />)}
       </div>
     </div>
   );

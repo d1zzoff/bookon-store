@@ -37,28 +37,26 @@ const config = {
       keyframes: {
         "bg-on": {
           from: { opacity: "0" },
-          tp: { opacity: "1" },
+          to: { opacity: "1" },
         },
         "bg-off": {
           from: { opacity: "1" },
-          tp: { opacity: "0" },
+          to: { opacity: "0" },
         },
-        "dropdown-slide-down": {
+        "slide-down": {
           from: { transform: "translateY(-5%)", opacity: "0" },
           to: { transform: "translateY(0)", opacity: "1" },
         },
-        "dropdown-slide-up": {
+        "slide-up": {
           from: { transform: "translateY(0)", opacity: "1" },
           to: { transform: "translateY(-5%)", opacity: "0" },
         },
       },
       animation: {
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
         "bg-on": "bg-on 0.2s ease forwards",
         "bg-off": "bg-off 0.2s ease forwards",
-        "slide-down": "dropdown-slide-down 0.2s ease-out",
-        "slide-up": "dropdown-slide-up 0.2s ease-in",
+        "slide-down": "slide-down 0.2s ease forwards",
+        "slide-up": "slide-up 0.2s ease forwards",
       },
     },
   },

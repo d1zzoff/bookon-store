@@ -1,79 +1,43 @@
-"use client";
+"use server";
 
 import { cn } from "@/lib/utils";
-import React, { Suspense } from "react";
-import { RangeSlider } from "./range";
-import { useFilters } from "@/lib/hooks/use-filters";
-import { useQueryFilters } from "@/lib/hooks/use-query-filters";
+import React from "react";
 import { LanguagesFilter } from "./languages-filter";
 import { CategoriesFilter } from "./categories-filter";
+import { ResetButton } from "./reset-button";
+import { PriceFilter } from "./price-filter";
+import { getCategories, getLanguages } from "@/lib/actions/products";
 
 interface Props {
   className?: string;
 }
 
-export const Filters: React.FC<Props> = ({ className }) => {
-  const filters = useFilters();
-
-  useQueryFilters(filters);
-
-  const updatePrice = (prices: number[]) => {
-    filters.setPrices("minPrice", prices[0]);
-    filters.setPrices("maxPrice", prices[1]);
-  };
+export const Filters: React.FC<Props> = async ({ className }) => {
+  /* Сомнительный метод фетча в этом случае, но не нашел альтернатив
+  т.к. был баг и не получалось отправлять запросы с самих компонентов */
+  const [categories, languages] = await Promise.all([
+    getCategories(),
+    getLanguages(),
+  ]);
 
   return (
     <div
       className={cn(
-        "flex flex-col items-start gap-[30px] w-[270px] h-full",
+        "flex flex-col items-start gap-[30px] w-[270px]",
         className
       )}
     >
-      <h3>Фильтры</h3>
-
-      {/* Фильтр цен */}
-      <div className="flex flex-col items-start gap-5 w-full">
-        <p className="font-bold">Цена, грн</p>
-        <RangeSlider
-          min={0}
-          max={5000}
-          step={10}
-          value={[
-            filters.prices.minPrice || 0,
-            filters.prices.maxPrice || 5000,
-          ]}
-          onValueChange={updatePrice}
-        />
-
-        <div className="flex items-start w-full gap-[10px]">
-          <input
-            type="number"
-            className="w-full h-10 rounded-[15px] border border-grey-200 outline-none px-[15px]"
-            placeholder="от"
-            value={String(filters.prices.minPrice || 0)}
-            onChange={(e) =>
-              filters.setPrices("minPrice", Number(e.target.value))
-            }
-            min={0}
-            max={5000}
-          />
-          <input
-            type="number"
-            className="w-full h-10 rounded-[15px] border border-grey-200 outline-none px-[15px]"
-            placeholder="до"
-            value={String(filters.prices.maxPrice || 5000)}
-            onChange={(e) =>
-              filters.setPrices("maxPrice", Number(e.target.value))
-            }
-            min={0}
-            max={5000}
-          />
-        </div>
+      <div className="flex items-center gap-[5px]">
+        <h3>Фильтры</h3>
+        <ResetButton />
       </div>
 
+      {/* Фильтр цен */}
+      <PriceFilter />
+
       {/* Фильтры категории и языка */}
-      <CategoriesFilter />
-      {/* <LanguagesFilter /> */}
+      <CategoriesFilter categories={categories} />
+      <LanguagesFilter languages={languages} />
     </div>
   );
 };

@@ -12,10 +12,10 @@ import { RegisterForm } from "./auth-forms/register-form";
 
 interface Props {
   isOpen: boolean;
-  setOpen: (open: boolean) => void;
+  onClose: () => void;
 }
 
-export const AuthModal: React.FC<Props> = ({ isOpen, setOpen }) => {
+export const AuthModal: React.FC<Props> = ({ isOpen, onClose }) => {
   const [type, setType] = React.useState<"login" | "register">("login");
 
   const router = useRouter();
@@ -25,12 +25,12 @@ export const AuthModal: React.FC<Props> = ({ isOpen, setOpen }) => {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={() => setOpen(false)}>
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         {type === "login" ? (
-          <LoginForm toggleType={toggleType} />
+          <LoginForm toggleType={toggleType} onClose={onClose} />
         ) : (
-          <RegisterForm toggleType={toggleType} />
+          <RegisterForm toggleType={toggleType} onClose={onClose} />
         )}
 
         <div className="flex justify-between my-[15px] gap-[10px] items-center">

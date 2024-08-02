@@ -1,23 +1,25 @@
 "use client";
 
-import { getLanguages } from "@/lib/actions/products";
-import useSWR from "swr";
+import { Language } from "@/lib/actions/products";
 import { CheckboxGroup } from "../checkbox-group";
 import { useFilters } from "@/lib/hooks/use-filters";
-import { useEffect } from "react";
 
-export const LanguagesFilter: React.FC = () => {
+interface Props {
+  className?: string;
+  languages: Language[];
+}
+
+export const LanguagesFilter: React.FC<Props> = ({ className, languages }) => {
   const filters = useFilters();
-
-  const { data, isLoading } = useSWR("languages", getLanguages);
 
   return (
     <CheckboxGroup
-      loading={isLoading}
-      items={data || []}
+      loading={false}
+      items={languages || []}
       title="Языки"
       selectedValues={filters.languages}
       onClickCheckbox={filters.setLanguages}
+      className={className}
     />
   );
 };

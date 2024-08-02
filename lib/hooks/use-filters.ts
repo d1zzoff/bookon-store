@@ -1,10 +1,11 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 import { useCategoryFilter } from "./use-category-filter";
 import { useSort } from "./use-sort";
 import { useLanguageFilter } from "./use-language-filter";
+import qs from "qs";
 
 interface PriceProps {
   minPrice?: number;
@@ -27,35 +28,13 @@ interface ReturnProps extends Filters {
 }
 
 export const useFilters = (): ReturnProps => {
+  const router = useRouter();
+
   const { categories, toggleCategory, setCategories } = useCategoryFilter();
   const { languages, toggleLanguage, setLanguages } = useLanguageFilter();
   const { sort, setSort } = useSort();
 
-  const searchParams = useSearchParams();
-
-  React.useEffect(() => {
-    const sortParam = searchParams.get("sort");
-    setSort(sortParam);
-  }, []);
-
-  const [prices, setPrices] = React.useState<PriceProps>({
-    minPrice: Number(searchParams.get("minPrice")) || undefined,
-    maxPrice: Number(searchParams.get("maxPrice")) || undefined,
-  });
-
-  React.useEffect(() => {
-    const categoriesParam = searchParams.get("categories");
-    const categoriesArray = categoriesParam ? categoriesParam.split(",") : [];
-
-    setCategories(categoriesArray);
-  }, [searchParams, setCategories]);
-
-  React.useEffect(() => {
-    const languagesParam = searchParams.get("languages");
-    const languagesArray = languagesParam ? languagesParam.split(",") : [];
-
-    setLanguages(languagesArray);
-  }, [searchParams, setLanguages]);
+  const [prices, setPrices] = React.useState<PriceProps>({});
 
   const updatePrice = (name: keyof PriceProps, value: number) => {
     setPrices((prev) => ({ ...prev, [name]: value }));
@@ -66,6 +45,24 @@ export const useFilters = (): ReturnProps => {
     setCategories([]);
     setLanguages([]);
   };
+
+  React.useEffect(() => {
+    const params = {
+      ...prices,
+      languages: Array.from(languages),
+      categories: Array.from(categories),
+      sort: sort,
+    };
+
+    const query = qs.stringify(params, {
+      arrayFormat: "comma",
+      skipNulls: true,
+    });
+
+    router.push(`?${query}`, {
+      scroll: false,
+    });
+  }, [languages, categories, prices, sort]);
 
   return {
     categories,
